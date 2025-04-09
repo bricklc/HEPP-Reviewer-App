@@ -1,0 +1,42 @@
+[
+    {
+      "name": "Gates",
+      "description": "Control the flow of water from the reservoir into the penstocks or spillway."
+    },
+    {
+      "name": "Penstocks",
+      "description": "Large pipes or tunnels that convey water under pressure from the reservoir intake to the turbines."
+    },
+    {
+      "name": "Inlet valve",
+      "description": "A valve located just before the turbine to control or completely shut off the water flow."
+    },
+    {
+      "name": "Turbine",
+      "description": "A rotating machine that converts the kinetic and potential energy of water into rotational mechanical energy."
+    },
+    {
+      "name": "Generator",
+      "description": "Converts the mechanical energy supplied by the turbine's rotating shaft into electrical energy."
+    },
+    {
+      "name": "Automation, control, protection",
+      "description": "Integrated systems responsible for monitoring, managing operation, and ensuring the safety of the plant equipment."
+    },
+    {
+      "name": "Medium-voltage switchgear",
+      "description": "Manages and protects the electrical circuits connecting the generator to the step-up transformer within the powerhouse."
+    },
+    {
+      "name": "Power transformer",
+      "description": "Increases the voltage of the electricity produced by the generator to high levels suitable for efficient long-distance transmission."
+    },
+    {
+      "name": "High-voltage switchgear",
+      "description": "Located in the switchyard, this equipment controls, protects, and isolates the high-voltage connection between the power plant and the transmission lines."
+    },
+    {
+      "name": "Transmission line",
+      "description": "A network of conductors and towers used to transport high-voltage electricity from the power plant over long distances."
+    }
+  ]

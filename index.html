@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hydro Electric Power Plant Review</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Hydro Electric Power Plant Review</h1>
+            <p>Learn and test your knowledge of HEPP components</p>
+        </header>
+
+        <div id="mode-selection" class="section">
+            <h2>Select a Mode</h2>
+            <div class="buttons">
+                <button id="learn-mode-btn" class="mode-btn">Learn Mode</button>
+                <button id="quiz-mode-btn" class="mode-btn">Quiz Mode</button>
+                <button id="captcha-mode-btn" class="mode-btn">Captcha Mode</button>
+            </div>
+        </div>
+
+        <div id="learn-mode" class="section mode-content hidden">
+            <h2>Learn Mode</h2>
+            <p>Click on any component to learn more about it.</p>
+            <div class="labelled-diagram-container">
+                <h3>Labelled Diagram</h3>
+                <div class="diagram-wrapper">
+                    <img src="images/Labelled Diagram.png" alt="Labelled HEPP Diagram" class="labelled-diagram">
+                </div>
+            </div>
+            <h3>Components</h3>
+            <div id="learn-components" class="components-grid"></div>
+            <button id="back-from-learn" class="back-btn">Back to Modes</button>
+        </div>
+
+        <div id="quiz-mode" class="section mode-content hidden">
+            <h2>Quiz Mode</h2>
+            <div class="score-container">
+                <span>Score: <span id="quiz-score">0</span></span>
+                <button id="quiz-diagram-btn" class="diagram-btn">View Diagram</button>
+            </div>
+            <div class="quiz-container">
+                <div id="quiz-image-container">
+                    <img id="quiz-image" src="" alt="HEPP Component">
+                </div>
+                <div id="quiz-options" class="options-container"></div>
+            </div>
+            <button id="back-from-quiz" class="back-btn">Back to Modes</button>
+        </div>
+
+        <div id="captcha-mode" class="section mode-content hidden">
+            <h2>Captcha Mode</h2>
+            <div class="score-container">
+                <span>Score: <span id="captcha-score">0</span></span>
+                <button id="captcha-diagram-btn" class="diagram-btn">View Diagram</button>
+            </div>
+            <div class="captcha-container">
+                <div class="captcha-prompt">
+                    <p>Select the image that shows: <span id="captcha-target"></span></p>
+                </div>
+                <div id="captcha-grid" class="captcha-grid"></div>
+            </div>
+            <button id="back-from-captcha" class="back-btn">Back to Modes</button>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 HEPP Review App</p>
+        </footer>
+    </div>
+
+    <!-- Diagram Modal -->
+    <div id="diagram-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="diagram-container">
+                <img id="diagram-image" src="images/Blank Diagram.png" alt="HEPP Diagram">
+            </div>
+        </div>
+    </div>
+
+    <!-- Component Detail Modal -->
+    <div id="component-modal" class="modal hidden">
+        <div class="modal-content component-modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="component-detail">
+                <div class="component-detail-image">
+                    <img id="component-detail-img" src="" alt="Component">
+                </div>
+                <div class="component-detail-info">
+                    <h3 id="component-detail-name"></h3>
+                    <p id="component-detail-description" class="typing-effect"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
