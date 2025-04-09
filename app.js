@@ -57,11 +57,6 @@ function init() {
     loadComponents();
     loadComponentDescriptions();
     setupEventListeners();
-    
-    // Add error handling for all images
-    document.querySelectorAll('img').forEach(img => {
-        img.addEventListener('error', handleImageError);
-    });
 }
 
 // Load all component images and their names
@@ -95,6 +90,18 @@ function loadComponents() {
             filename: file
         });
     });
+}
+
+// Load component descriptions from JSON file
+function loadComponentDescriptions() {
+    fetch('components.json')
+        .then(response => response.json())
+        .then(data => {
+            componentDescriptions = data;
+        })
+        .catch(error => {
+            console.error('Error loading component descriptions:', error);
+        });
 }
 
 // Set up event listeners
@@ -157,18 +164,6 @@ function goBackToModeSelection() {
     captchaModeSection.classList.add('hidden');
 }
 
-// Load component descriptions from JSON file
-function loadComponentDescriptions() {
-    fetch('components.json')
-        .then(response => response.json())
-        .then(data => {
-            componentDescriptions = data;
-        })
-        .catch(error => {
-            console.error('Error loading component descriptions:', error);
-        });
-}
-
 // Start Learn Mode
 function startLearnMode() {
     modeSelectionSection.classList.add('hidden');
@@ -185,7 +180,6 @@ function startLearnMode() {
         const img = document.createElement('img');
         img.src = component.image;
         img.alt = component.name;
-        img.loading = 'lazy'; // Add lazy loading
 
         const nameDiv = document.createElement('div');
         nameDiv.className = 'component-name';
@@ -193,12 +187,7 @@ function startLearnMode() {
 
         card.appendChild(img);
         card.appendChild(nameDiv);
-        
-        // Optimize event listener
-        card.addEventListener('click', () => {
-            showComponentDetail(component);
-        }, { passive: true });
-        
+        card.addEventListener('click', () => showComponentDetail(component));
         learnComponentsGrid.appendChild(card);
     });
 }
@@ -211,7 +200,7 @@ function startQuizMode() {
     // Reset score
     quizScore = 0;
     quizScoreElement.textContent = quizScore;
-
+    
     // Initialize the quiz queue with all unique component names
     initializeQuizQueue();
 
@@ -223,7 +212,7 @@ function startQuizMode() {
 function initializeQuizQueue() {
     // Get all unique component names
     const uniqueComponents = getUniqueComponents();
-
+    
     // Create a new queue and shuffle it
     quizQueue = [...uniqueComponents];
     shuffleArray(quizQueue);
@@ -233,14 +222,14 @@ function initializeQuizQueue() {
 function getUniqueComponents() {
     const uniqueComponents = [];
     const usedNames = new Set();
-
+    
     components.forEach(component => {
         if (!usedNames.has(component.name)) {
             uniqueComponents.push(component);
             usedNames.add(component.name);
         }
     });
-
+    
     return uniqueComponents;
 }
 
@@ -248,27 +237,27 @@ function getUniqueComponents() {
 function loadNextQuizQuestion() {
     // Clear previous options
     quizOptionsContainer.innerHTML = '';
-
+    
     // If the queue is empty, refill it
     if (quizQueue.length === 0) {
         initializeQuizQueue();
     }
-
+    
     // Get the next component from the queue
     const correctComponent = quizQueue.pop();
     currentQuizAnswer = correctComponent.name;
-
+    
     // Set the image
     quizImageElement.src = correctComponent.image;
     quizImageElement.alt = correctComponent.name;
-
+    
     // Generate 3 wrong options (ensure they're unique)
     const wrongOptions = getUniqueRandomComponents(3, correctComponent.name);
-
+    
     // Combine correct and wrong options, then shuffle
     const allOptions = [correctComponent.name, ...wrongOptions.map(c => c.name)];
     shuffleArray(allOptions);
-
+    
     // Create option buttons
     allOptions.forEach(option => {
         const button = document.createElement('button');
@@ -317,7 +306,7 @@ function startCaptchaMode() {
     // Reset score
     captchaScore = 0;
     captchaScoreElement.textContent = captchaScore;
-
+    
     // Initialize the captcha queue with all unique component names
     initializeCaptchaQueue();
 
@@ -329,7 +318,7 @@ function startCaptchaMode() {
 function initializeCaptchaQueue() {
     // Get all unique component names
     const uniqueComponents = getUniqueComponents();
-
+    
     // Create a new queue and shuffle it
     captchaQueue = [...uniqueComponents];
     shuffleArray(captchaQueue);
@@ -339,36 +328,36 @@ function initializeCaptchaQueue() {
 function loadNextCaptchaChallenge() {
     // Clear previous grid
     captchaGridElement.innerHTML = '';
-
+    
     // If the queue is empty, refill it
     if (captchaQueue.length === 0) {
         initializeCaptchaQueue();
     }
-
+    
     // Get the next component from the queue as the target
     const targetComponent = captchaQueue.pop();
     currentCaptchaAnswer = targetComponent.name;
-
+    
     // Get 3 more unique components for the grid (different from the target)
     const otherComponents = getUniqueRandomComponents(3, targetComponent.name);
-
+    
     // Combine target and other components, then shuffle for grid placement
     const gridComponents = [targetComponent, ...otherComponents];
     shuffleArray(gridComponents);
-
+    
     // Set the target text
     captchaTargetElement.textContent = targetComponent.name;
-
+    
     // Create the grid
     gridComponents.forEach((component) => {
         const imageContainer = document.createElement('div');
         imageContainer.className = 'captcha-image';
         imageContainer.dataset.name = component.name;
-
+        
         const img = document.createElement('img');
         img.src = component.image;
         img.alt = component.name;
-
+        
         imageContainer.appendChild(img);
         imageContainer.addEventListener('click', () => checkCaptchaAnswer(component.name, imageContainer));
         captchaGridElement.appendChild(imageContainer);
@@ -453,9 +442,33 @@ function toggleDiagramZoom() {
 
 // Show component detail modal
 function showComponentDetail(component) {
-    // Find component info
-    const componentInfo = componentDescriptions.find(desc => 
-        desc.name.toLowerCase() === component.name.toLowerCase());
+    // Find component info with more flexible matching
+    const componentInfo = componentDescriptions.find(desc => {
+        // Try different matching strategies
+        const descNameLower = desc.name.toLowerCase();
+        const compNameLower = component.name.toLowerCase();
+        
+        // Direct match
+        if (descNameLower === compNameLower) {
+            return true;
+        }
+        
+        // Check if component name contains description name or vice versa
+        if (compNameLower.includes(descNameLower) || descNameLower.includes(compNameLower)) {
+            return true;
+        }
+        
+        // Special case handling
+        if (compNameLower.includes('switch gear') && descNameLower.includes('switchgear')) {
+            return true;
+        }
+        
+        if (compNameLower.includes('gate') && descNameLower === 'gates') {
+            return true;
+        }
+        
+        return false;
+    });
 
     if (!componentInfo) {
         console.error('Component description not found:', component.name);
@@ -491,38 +504,32 @@ function showComponentDetail(component) {
 function closeComponentModal() {
     componentModal.classList.add('hidden');
     document.body.style.overflow = '';
-
+    
+    // Clear any existing typing animation
     if (typingTimeout) {
         clearTimeout(typingTimeout);
         typingTimeout = null;
     }
-
-    // Reset modal content
-    componentDetailDescription.textContent = '';
+    
+    // Reset typing effect
     componentDetailDescription.classList.remove('typing-complete');
 }
 
 // Typing effect for component description
 function typeDescription(text, index) {
+    // Clear any existing typing animation
     if (typingTimeout) {
         clearTimeout(typingTimeout);
     }
-
-    if (!text || index >= text.length) {
+    
+    if (index < text.length) {
+        componentDetailDescription.textContent += text.charAt(index);
+        typingTimeout = setTimeout(() => typeDescription(text, index + 1), typingSpeed);
+    } else {
+        // Add blinking cursor at the end
         componentDetailDescription.classList.add('typing-complete');
-        return;
     }
-
-    componentDetailDescription.textContent += text.charAt(index);
-    typingTimeout = setTimeout(() => typeDescription(text, index + 1), typingSpeed);
-}
-
-// Add error handling for image loading
-function handleImageError(event) {
-    console.error('Error loading image:', event.target.src);
-    event.target.src = 'images/placeholder.png'; // Add a placeholder image
 }
 
 // Initialize the app when the DOM is loaded
 document.addEventListener('DOMContentLoaded', init);
-
