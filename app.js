@@ -57,6 +57,11 @@ function init() {
     loadComponents();
     loadComponentDescriptions();
     setupEventListeners();
+    
+    // Add error handling for all images
+    document.querySelectorAll('img').forEach(img => {
+        img.addEventListener('error', handleImageError);
+    });
 }
 
 // Load all component images and their names
@@ -180,6 +185,7 @@ function startLearnMode() {
         const img = document.createElement('img');
         img.src = component.image;
         img.alt = component.name;
+        img.loading = 'lazy'; // Add lazy loading
 
         const nameDiv = document.createElement('div');
         nameDiv.className = 'component-name';
@@ -187,7 +193,12 @@ function startLearnMode() {
 
         card.appendChild(img);
         card.appendChild(nameDiv);
-        card.addEventListener('click', () => showComponentDetail(component));
+        
+        // Optimize event listener
+        card.addEventListener('click', () => {
+            showComponentDetail(component);
+        }, { passive: true });
+        
         learnComponentsGrid.appendChild(card);
     });
 }
@@ -442,35 +453,38 @@ function toggleDiagramZoom() {
 
 // Show component detail modal
 function showComponentDetail(component) {
-    // Find the description for this component
-    const componentInfo = componentDescriptions.find(desc =>
-        desc.name.toLowerCase() === component.name.toLowerCase() ||
-        component.name.toLowerCase().includes(desc.name.toLowerCase()) ||
-        desc.name.toLowerCase().includes(component.name.toLowerCase())
-    );
+    // Find component info
+    const componentInfo = componentDescriptions.find(desc => 
+        desc.name.toLowerCase() === component.name.toLowerCase());
 
     if (!componentInfo) {
-        console.error('No description found for component:', component.name);
+        console.error('Component description not found:', component.name);
         return;
+    }
+
+    // Reset modal state
+    componentDetailDescription.classList.remove('typing-complete');
+    componentDetailDescription.textContent = '';
+    
+    // Clear any existing typing animation
+    if (typingTimeout) {
+        clearTimeout(typingTimeout);
+        typingTimeout = null;
     }
 
     // Set the component details
     componentDetailImg.src = component.image;
     componentDetailImg.alt = component.name;
     componentDetailName.textContent = componentInfo.name;
-    componentDetailDescription.textContent = '';
 
     // Open the modal
     componentModal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
 
-    // Clear any existing typing animation
-    if (typingTimeout) {
-        clearTimeout(typingTimeout);
-    }
-
-    // Start the typing effect
-    typeDescription(componentInfo.description, 0);
+    // Start typing effect after a short delay to ensure modal is visible
+    setTimeout(() => {
+        typeDescription(componentInfo.description, 0);
+    }, 100);
 }
 
 // Close the component detail modal
@@ -478,27 +492,37 @@ function closeComponentModal() {
     componentModal.classList.add('hidden');
     document.body.style.overflow = '';
 
-    // Clear any existing typing animation
     if (typingTimeout) {
         clearTimeout(typingTimeout);
+        typingTimeout = null;
     }
+
+    // Reset modal content
+    componentDetailDescription.textContent = '';
+    componentDetailDescription.classList.remove('typing-complete');
 }
 
 // Typing effect for component description
 function typeDescription(text, index) {
-    // Clear any existing typing animation
     if (typingTimeout) {
         clearTimeout(typingTimeout);
     }
 
-    if (index < text.length) {
-        componentDetailDescription.textContent += text.charAt(index);
-        typingTimeout = setTimeout(() => typeDescription(text, index + 1), typingSpeed);
-    } else {
-        // Add blinking cursor at the end
+    if (!text || index >= text.length) {
         componentDetailDescription.classList.add('typing-complete');
+        return;
     }
+
+    componentDetailDescription.textContent += text.charAt(index);
+    typingTimeout = setTimeout(() => typeDescription(text, index + 1), typingSpeed);
+}
+
+// Add error handling for image loading
+function handleImageError(event) {
+    console.error('Error loading image:', event.target.src);
+    event.target.src = 'images/placeholder.png'; // Add a placeholder image
 }
 
 // Initialize the app when the DOM is loaded
 document.addEventListener('DOMContentLoaded', init);
+

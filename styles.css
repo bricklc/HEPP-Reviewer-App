@@ -130,7 +130,8 @@ h3 {
 .component-card img {
     width: 100%;
     height: 150px;
-    object-fit: cover;
+    object-fit: contain; /* Changed from cover to contain */
+    padding: 10px; /* Added padding to prevent image from touching borders */
 }
 
 .component-card .component-name {
@@ -274,6 +275,7 @@ h3 {
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    transition: opacity 0.3s ease-in-out;
 }
 
 .modal.hidden {
@@ -289,11 +291,12 @@ h3 {
     max-height: 90vh;
     position: relative;
     overflow: hidden;
+    overflow-y: auto;
 }
 
 .component-modal-content {
     max-width: 800px;
-    padding: 30px;
+    padding: 20px;
 }
 
 .close-modal {
@@ -336,7 +339,7 @@ h3 {
 .component-detail {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 30px;
 }
 
 @media (min-width: 768px) {
@@ -350,11 +353,18 @@ h3 {
     border: 1px solid #ddd;
     border-radius: 8px;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    padding: 10px;
 }
 
 .component-detail-image img {
     width: 100%;
     height: auto;
+    max-height: 300px;
+    object-fit: contain;
     display: block;
 }
 
@@ -397,3 +407,5 @@ footer {
     color: #666;
     font-size: 14px;
 }
+
+
