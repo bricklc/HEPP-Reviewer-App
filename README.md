@@ -12,18 +12,21 @@ An interactive web application for learning and testing knowledge about Hydro El
 ## Installation
 
 1. Clone the repository
-2. Open `index.html` in your web browser
+2. Navigate to the HEPP-Reviewer-App directory
+3. Open `index.html` in your web browser
 
 ## Project Structure
 
 ```
-HEPP-Reviewer-App/
+.
 ├── images/          # Component and diagram images
 ├── sounds/          # Audio feedback files
 ├── index.html      # Main HTML file
 ├── styles.css      # Styling
 ├── app.js          # Application logic
-└── components.json # Component descriptions
+├── components.json # Component descriptions
+├── netlify.toml    # Netlify configuration
+└── LICENSE         # MIT License
 ```
 
 ## Usage
@@ -39,7 +42,7 @@ The app is configured for Netlify deployment:
 1. Connect GitHub repository to Netlify
 2. Configure build settings:
    - Build command: None required
-   - Publish directory: `.`
+   - Publish directory: `HEPP-Reviewer-App`
 
 ## License
 
