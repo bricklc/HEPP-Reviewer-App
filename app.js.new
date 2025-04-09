@@ -201,7 +201,7 @@ function startQuizMode() {
     // Reset score
     quizScore = 0;
     quizScoreElement.textContent = quizScore;
-
+    
     // Initialize the quiz queue with all unique component names
     initializeQuizQueue();
 
@@ -213,7 +213,7 @@ function startQuizMode() {
 function initializeQuizQueue() {
     // Get all unique component names
     const uniqueComponents = getUniqueComponents();
-
+    
     // Create a new queue and shuffle it
     quizQueue = [...uniqueComponents];
     shuffleArray(quizQueue);
@@ -223,14 +223,14 @@ function initializeQuizQueue() {
 function getUniqueComponents() {
     const uniqueComponents = [];
     const usedNames = new Set();
-
+    
     components.forEach(component => {
         if (!usedNames.has(component.name)) {
             uniqueComponents.push(component);
             usedNames.add(component.name);
         }
     });
-
+    
     return uniqueComponents;
 }
 
@@ -238,27 +238,27 @@ function getUniqueComponents() {
 function loadNextQuizQuestion() {
     // Clear previous options
     quizOptionsContainer.innerHTML = '';
-
+    
     // If the queue is empty, refill it
     if (quizQueue.length === 0) {
         initializeQuizQueue();
     }
-
+    
     // Get the next component from the queue
     const correctComponent = quizQueue.pop();
     currentQuizAnswer = correctComponent.name;
-
+    
     // Set the image
     quizImageElement.src = correctComponent.image;
     quizImageElement.alt = correctComponent.name;
-
+    
     // Generate 3 wrong options (ensure they're unique)
     const wrongOptions = getUniqueRandomComponents(3, correctComponent.name);
-
+    
     // Combine correct and wrong options, then shuffle
     const allOptions = [correctComponent.name, ...wrongOptions.map(c => c.name)];
     shuffleArray(allOptions);
-
+    
     // Create option buttons
     allOptions.forEach(option => {
         const button = document.createElement('button');
@@ -307,7 +307,7 @@ function startCaptchaMode() {
     // Reset score
     captchaScore = 0;
     captchaScoreElement.textContent = captchaScore;
-
+    
     // Initialize the captcha queue with all unique component names
     initializeCaptchaQueue();
 
@@ -319,7 +319,7 @@ function startCaptchaMode() {
 function initializeCaptchaQueue() {
     // Get all unique component names
     const uniqueComponents = getUniqueComponents();
-
+    
     // Create a new queue and shuffle it
     captchaQueue = [...uniqueComponents];
     shuffleArray(captchaQueue);
@@ -329,36 +329,36 @@ function initializeCaptchaQueue() {
 function loadNextCaptchaChallenge() {
     // Clear previous grid
     captchaGridElement.innerHTML = '';
-
+    
     // If the queue is empty, refill it
     if (captchaQueue.length === 0) {
         initializeCaptchaQueue();
     }
-
+    
     // Get the next component from the queue as the target
     const targetComponent = captchaQueue.pop();
     currentCaptchaAnswer = targetComponent.name;
-
+    
     // Get 3 more unique components for the grid (different from the target)
     const otherComponents = getUniqueRandomComponents(3, targetComponent.name);
-
+    
     // Combine target and other components, then shuffle for grid placement
     const gridComponents = [targetComponent, ...otherComponents];
     shuffleArray(gridComponents);
-
+    
     // Set the target text
     captchaTargetElement.textContent = targetComponent.name;
-
+    
     // Create the grid
     gridComponents.forEach((component) => {
         const imageContainer = document.createElement('div');
         imageContainer.className = 'captcha-image';
         imageContainer.dataset.name = component.name;
-
+        
         const img = document.createElement('img');
         img.src = component.image;
         img.alt = component.name;
-
+        
         imageContainer.appendChild(img);
         imageContainer.addEventListener('click', () => checkCaptchaAnswer(component.name, imageContainer));
         captchaGridElement.appendChild(imageContainer);
@@ -448,26 +448,26 @@ function showComponentDetail(component) {
         // Try different matching strategies
         const descNameLower = desc.name.toLowerCase();
         const compNameLower = component.name.toLowerCase();
-
+        
         // Direct match
         if (descNameLower === compNameLower) {
             return true;
         }
-
+        
         // Check if component name contains description name or vice versa
         if (compNameLower.includes(descNameLower) || descNameLower.includes(compNameLower)) {
             return true;
         }
-
+        
         // Special case handling
         if (compNameLower.includes('switch gear') && descNameLower.includes('switchgear')) {
             return true;
         }
-
+        
         if (compNameLower.includes('gate') && descNameLower === 'gates') {
             return true;
         }
-
+        
         return false;
     });
 
@@ -479,7 +479,7 @@ function showComponentDetail(component) {
     // Reset modal state
     componentDetailDescription.classList.remove('typing-complete');
     componentDetailDescription.textContent = '';
-
+    
     // Clear any existing typing animation
     if (typingTimeout) {
         clearTimeout(typingTimeout);
@@ -505,13 +505,13 @@ function showComponentDetail(component) {
 function closeComponentModal() {
     componentModal.classList.add('hidden');
     document.body.style.overflow = '';
-
+    
     // Clear any existing typing animation
     if (typingTimeout) {
         clearTimeout(typingTimeout);
         typingTimeout = null;
     }
-
+    
     // Reset typing effect
     componentDetailDescription.classList.remove('typing-complete');
 }
@@ -522,7 +522,7 @@ function typeDescription(text, index) {
     if (typingTimeout) {
         clearTimeout(typingTimeout);
     }
-
+    
     if (index < text.length) {
         componentDetailDescription.textContent += text.charAt(index);
         typingTimeout = setTimeout(() => typeDescription(text, index + 1), typingSpeed);
